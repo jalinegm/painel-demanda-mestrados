@@ -1,0 +1,53 @@
+name: Atualizar dados do painel
+
+on:
+  schedule:
+    # 10h10 UTC = 7h10 em Brasília
+    - cron: "10 10 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: atualizar-dados
+  cancel-in-progress: false
+
+jobs:
+  atualizar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependências
+        run: pip install google-auth==2.35.0 requests==2.32.3
+
+      - name: Baixar e limpar as respostas
+        env:
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          PLANILHA_ID: ${{ secrets.PLANILHA_ID }}
+        run: |
+          if [ -z "$GOOGLE_SERVICE_ACCOUNT_JSON" ]; then
+            echo "::notice::Segredo GOOGLE_SERVICE_ACCOUNT_JSON ainda não configurado; nada foi atualizado. Veja CONFIGURAR-ATUALIZACAO.md."
+            exit 0
+          fi
+          # O arquivo bruto tem e-mails: fica fora do repositório e é apagado ao final.
+          python -I scripts/baixar_planilha.py "$RUNNER_TEMP/bruto.csv"
+          python -I scripts/limpar_respostas.py "$RUNNER_TEMP/bruto.csv" docs/dados/respostas.csv
+          rm -f "$RUNNER_TEMP/bruto.csv"
+
+      - name: Gravar se houver respostas novas
+        run: |
+          if git diff --quiet -- docs/dados/respostas.csv; then
+            echo "Nenhuma resposta nova."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/dados/respostas.csv
+          git commit -m "Atualiza respostas do estudo de demanda"
+          git push

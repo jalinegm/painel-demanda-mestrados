@@ -1,0 +1,11 @@
+# Exportações brutas da planilha têm e-mails: nunca versionar
+*bruto*.csv
+*brutas*.csv
+bruto.json
+
+# Capturas e arquivos de trabalho do processo de design
+.impeccable/review/
+.impeccable/*.json
+!.impeccable/config.json
+
+__pycache__/

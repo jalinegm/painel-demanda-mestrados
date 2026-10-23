@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "src/painel.html"
+        ],
+        "createdAt": "2026-10-23T20:43:30.960Z",
+        "reason": "Claude triage: .mp, .mp-seal, .mp-facts and .mp-voices-band get their inset from .mp-wrap children, padding-block and the seal's grid centering; full-page captures at 1440 and 375 show text inset from every edge"
+      }
+    ]
+  }
+}
