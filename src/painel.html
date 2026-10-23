@@ -467,7 +467,10 @@ dash.calc('contagens', {
   const naTela = (el) => { const r = el.getBoundingClientRect(); return r.top < innerHeight * 0.92 && r.bottom > 0; };
   const contar = (el, alvo) => {
     const de = Number((el.textContent || '').replace(/\D/g, '')) || 0;
-    if (!MOVER || de === alvo) { d3.select(el).interrupt(); el.textContent = fmt(alvo); return; }
+    d3.select(el).interrupt();
+    // O valor final fica escrito desde já: se a aba estiver em segundo plano, a contagem não deixa um número velho na tela.
+    el.textContent = fmt(alvo);
+    if (!MOVER || de === alvo) return;
     d3.select(el).transition().duration(950).ease(d3.easeCubicOut)
       .tween('text', () => { const i = d3.interpolateRound(de, alvo); return (t) => { el.textContent = fmt(i(t)); }; })
       .on('interrupt end', () => { el.textContent = fmt(alvo); });
