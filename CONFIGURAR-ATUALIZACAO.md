@@ -13,7 +13,7 @@ A configuração é feita uma vez só e leva uns 15 minutos.
    - Nome: `leitor-planilha`.
    - Clique em **Criar e continuar**, pule a parte de papéis e clique em **Concluir**. A conta não precisa de nenhum papel no projeto.
 5. Clique na conta criada e copie o e-mail dela. Ele termina em `@painel-mestrados-iffar.iam.gserviceaccount.com`.
-6. Na aba **Chaves**, clique em **Adicionar chave > Criar nova chave**, escolha **JSON** e clique em **Criar**. Um arquivo `.json` é baixado.
+6. Abra https://console.cloud.google.com/iam-admin/serviceaccounts, com o projeto `painel-mestrados-iffar` selecionado no alto da página, e clique no e-mail da conta `leitor-planilha` (é um link azul na lista). Na página da conta, as abas ficam logo abaixo do título: **Detalhes**, **Permissões**, **Chaves** (em inglês, **Keys**), **Métricas** e **Registros**. Na aba **Chaves**, clique em **Adicionar chave > Criar nova chave**, escolha **JSON** e clique em **Criar**. Um arquivo `.json` é baixado.
 
 Esse arquivo é a senha da conta de serviço. Não o envie por e-mail nem o coloque na pasta do projeto.
 
