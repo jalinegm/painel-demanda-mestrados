@@ -220,8 +220,21 @@ html, body { margin: 0; background: #0e3b22; }
   .mp-bubble.mp-in blockquote { transform-origin: 0 100%; animation: mp-pop .55s var(--mp-ease) calc(var(--i, 0) * 70ms) both; }
   .mp-bubble.mp-in figcaption { animation: mp-fade .5s var(--mp-ease) calc(var(--i, 0) * 70ms + .2s) both; }
 }
+/* Movimento reduzido: nada se desloca, mas o cartaz, os títulos, as barras e os balões ainda surgem em fade. */
 @media (prefers-reduced-motion: reduce) {
-  .mp-row-fill { transition: opacity .2s; }
+  .mp-row-fill { opacity: 0; transition: opacity .5s ease calc(var(--i, 0) * 30ms); }
+  .mp-rows.mp-vista .mp-row-fill { opacity: 1; }
+  .mp-play .mp-logo { animation: mp-fade .5s ease both; }
+  .mp-play .mp-bar-1 { animation: mp-fade .6s ease .1s both; }
+  .mp-play .mp-bar-2 { animation: mp-fade .6s ease .25s both; }
+  .mp-play .mp-program { animation: mp-fade .6s ease .4s both; }
+  .mp-play .mp-lede { animation: mp-fade .6s ease .55s both; }
+  .mp-play .mp-seal { animation: mp-fade .6s ease .7s both; }
+  .mp-retell .mp-bar-1, .mp-retell .mp-bar-2, .mp-retell .mp-program { animation: mp-fade .35s ease both; }
+  .mp-h2.mp-wait { opacity: 0; }
+  .mp-h2.mp-in { animation: mp-fade .5s ease both; }
+  .mp-bubble.mp-wait blockquote, .mp-bubble.mp-wait figcaption { opacity: 0; }
+  .mp-bubble.mp-in blockquote, .mp-bubble.mp-in figcaption { animation: mp-fade .5s ease calc(var(--i, 0) * 60ms) both; }
 }
 @media (max-width: 720px) {
   .mp-seal { position: relative; right: auto; top: auto; justify-self: end; margin-top: -8px; order: 9; width: 128px; }
@@ -527,8 +540,9 @@ dash.calc('contagens', {
 
   // Movimento: tudo fica visível por padrão; só esperamos para animar o que ainda está fora da tela.
   const MOVER = matchMedia('(prefers-reduced-motion: no-preference)').matches;
+  const ETAPAS = typeof matchMedia === 'function';
   const visto = new WeakSet();
-  const encher = (el) => d3.select(el).selectAll('.mp-row-fill').style('transform', function () { return `scaleX(${this.dataset.r || 0})`; });
+  const encher = (el) => d3.select(el).classed('mp-vista', true).selectAll('.mp-row-fill').style('transform', function () { return `scaleX(${this.dataset.r || 0})`; });
   const naTela = (el) => { const r = el.getBoundingClientRect(); return r.top < innerHeight * 0.92 && r.bottom > 0; };
   const contar = (el, alvo) => {
     const de = Number((el.textContent || '').replace(/\D/g, '')) || 0;
@@ -542,7 +556,7 @@ dash.calc('contagens', {
   };
   const revelar = () => {
     document.querySelectorAll('.mp-rows').forEach((el) => {
-      if (!visto.has(el) && (!MOVER || naTela(el))) { visto.add(el); encher(el); }
+      if (!visto.has(el) && (!ETAPAS || naTela(el))) { visto.add(el); encher(el); }
     });
     let i = 0;
     document.querySelectorAll('.mp-wait').forEach((el) => {
@@ -552,7 +566,7 @@ dash.calc('contagens', {
     });
   };
   const esperar = (els) => {
-    if (!MOVER) return;
+    if (!ETAPAS) return;
     let i = 0;
     els.forEach((el) => {
       if (naTela(el)) { el.style.setProperty('--i', Math.min(i++, 8)); el.classList.add('mp-in'); }
@@ -564,7 +578,7 @@ dash.calc('contagens', {
   document.addEventListener('scroll', aoRolar, { capture: true, passive: true });
   addEventListener('resize', aoRolar);
   const heroi = document.querySelector('.mp-hero');
-  if (MOVER) {
+  if (ETAPAS) {
     heroi.classList.add('mp-play');
     esperar([...document.querySelectorAll('.mp-h2')]);
   }
@@ -578,7 +592,7 @@ dash.calc('contagens', {
       b.tabIndex = ativo ? 0 : -1;
     });
     document.getElementById('programa').textContent = PROGRAMA[recorte];
-    if (MOVER && recorteAnterior && recorteAnterior !== recorte) {
+    if (ETAPAS && recorteAnterior && recorteAnterior !== recorte) {
       heroi.classList.remove('mp-play', 'mp-retell');
       void heroi.offsetWidth;
       heroi.classList.add('mp-retell');
