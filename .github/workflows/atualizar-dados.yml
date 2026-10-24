@@ -2,8 +2,8 @@ name: Atualizar dados do painel
 
 on:
   schedule:
-    # 10h10 UTC = 7h10 em Brasília
-    - cron: "10 10 * * *"
+    # 6h37 UTC = 3h37 em Brasília (madrugada, fora do horário de pico do GitHub)
+    - cron: "37 6 * * *"
   workflow_dispatch:
 
 permissions:

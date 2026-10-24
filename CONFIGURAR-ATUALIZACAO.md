@@ -1,6 +1,6 @@
 # Configurar a atualização automática
 
-O workflow `.github/workflows/atualizar-dados.yml` roda todo dia às 7h10 (horário de Brasília). Ele baixa a planilha de respostas com uma conta de serviço do Google, limpa os dados com `scripts/limpar_respostas.py` e grava só `docs/dados/respostas.csv` no repositório. O GitHub Pages republica o site sozinho em seguida.
+O workflow `.github/workflows/atualizar-dados.yml` roda todo dia às 3h37 (horário de Brasília). Ele baixa a planilha de respostas com uma conta de serviço do Google, limpa os dados com `scripts/limpar_respostas.py` e grava só `docs/dados/respostas.csv` no repositório. O GitHub Pages republica o site sozinho em seguida.
 
 A configuração é feita uma vez só e leva uns 15 minutos.
 
