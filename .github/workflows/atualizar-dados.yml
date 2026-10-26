@@ -2,8 +2,10 @@ name: Atualizar dados do painel
 
 on:
   schedule:
-    # 6h37 UTC = 3h37 em Brasília (madrugada, fora do horário de pico do GitHub)
-    - cron: "37 6 * * *"
+    # A cada 3 horas, no minuto 37. O GitHub não garante o horário de agendamentos:
+    # em dias de fila uma execução atrasa horas ou é pulada, então rodar várias vezes
+    # ao dia garante que os dados não fiquem mais de um dia sem atualizar.
+    - cron: "37 */3 * * *"
   workflow_dispatch:
 
 permissions:

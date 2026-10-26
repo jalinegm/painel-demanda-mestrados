@@ -24,7 +24,7 @@ O painel serve para mostrar às equipes das propostas (APCN) e à gestão do IFF
 
 ## Atualizar os dados
 
-O GitHub Actions atualiza os dados todo dia às 3h37 (horário de Brasília). Veja [CONFIGURAR-ATUALIZACAO.md](CONFIGURAR-ATUALIZACAO.md) para a configuração inicial.
+O GitHub Actions confere a planilha a cada 3 horas e grava os dados quando há respostas novas. Veja [CONFIGURAR-ATUALIZACAO.md](CONFIGURAR-ATUALIZACAO.md) para a configuração inicial.
 
 Para atualizar à mão:
 
