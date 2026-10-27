@@ -41,15 +41,23 @@ jobs:
           python -I scripts/baixar_planilha.py "$RUNNER_TEMP/bruto.csv"
           python -I scripts/limpar_respostas.py "$RUNNER_TEMP/bruto.csv" docs/dados/respostas.csv
           rm -f "$RUNNER_TEMP/bruto.csv"
+          # Horário desta conferência: o painel mostra "Última atualização" mesmo sem respostas novas.
+          printf '{"conferido_em": "%s"}\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)" > docs/dados/atualizacao.json
 
-      - name: Gravar se houver respostas novas
+      - name: Gravar dados e horário da conferência
         run: |
-          if git diff --quiet -- docs/dados/respostas.csv; then
-            echo "Nenhuma resposta nova."
+          if [ -z "$(git status --porcelain -- docs/dados)" ]; then
+            echo "Nada a gravar."
             exit 0
           fi
+          if git diff --quiet -- docs/dados/respostas.csv; then
+            mensagem="Confere a planilha: sem respostas novas"
+          else
+            mensagem="Atualiza respostas do estudo de demanda"
+          fi
+          echo "$mensagem"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/dados/respostas.csv
-          git commit -m "Atualiza respostas do estudo de demanda"
+          git add docs/dados
+          git commit -m "$mensagem"
           git push

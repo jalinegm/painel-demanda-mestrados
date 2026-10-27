@@ -543,6 +543,13 @@ dash.calc('contagens', {
       if (typeof v === 'number') contar(el, v);
       else el.textContent = v == null ? '—' : v;
     });
+    // No site estático, "Última atualização" é a última conferência da planilha, mesmo sem respostas novas.
+    const conferido = typeof dash.conferidoEm === 'function' ? dash.conferidoEm() : null;
+    if (conferido && linha) {
+      const p = Object.fromEntries(new Intl.DateTimeFormat('pt-BR', { timeZone: 'America/Sao_Paulo', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
+        .formatToParts(new Date(conferido)).map((x) => [x.type, x.value]));
+      document.querySelectorAll('[data-field="ultima"]').forEach((el) => { el.textContent = `${p.day}/${p.month} às ${p.hour}:${p.minute}`; });
+    }
 
     const cont = dash.data('contagens');
     document.getElementById('grafico-curso').hidden = recorte !== 'todos';

@@ -47,7 +47,12 @@ html, body { margin: 0; background: #0e3b22; }
   let params = { curso: CURSOS.includes(inicial) ? inicial : 'todos' };
   let estado = 'loading';
   let linhas = [];
+  let conferidoEm = null;
   const rodar = () => inscritos.forEach((fn) => fn());
+  fetch('dados/atualizacao.json', { cache: 'no-cache' })
+    .then((r) => (r.ok ? r.json() : null))
+    .then((j) => { if (j && j.conferido_em) { conferidoEm = j.conferido_em; rodar(); } })
+    .catch(() => {});
   fetch('dados/respostas.csv', { cache: 'no-cache' })
     .then((r) => { if (!r.ok) throw new Error(r.status); return r.text(); })
     .then((texto) => { linhas = d3.csvParse(texto); estado = 'ok'; rodar(); })
@@ -71,6 +76,8 @@ html, body { margin: 0; background: #0e3b22; }
     },
     resetParams: () => { params = { curso: 'todos' }; rodar(); },
     setLink: () => {},
+    // Só no site estático: quando o GitHub Actions conferiu a planilha pela última vez.
+    conferidoEm: () => conferidoEm,
     refresh: () => {},
     colors: []
   };
