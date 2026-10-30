@@ -140,11 +140,11 @@
   .mp-option:hover svg, .mp-option[aria-checked="true"] svg { animation: mp-nudge .55s var(--mp-ease); }
 
   .mp-play .mp-logo { animation: mp-fade .6s var(--mp-ease) both; }
-  .mp-play .mp-bar-1 { animation: mp-wipe .85s var(--mp-ease) .15s both; }
-  .mp-play .mp-bar-2 { animation: mp-wipe .75s var(--mp-ease) .4s both; }
-  .mp-play .mp-program { animation: mp-rise .7s var(--mp-ease) .6s both; }
-  .mp-play .mp-lede { animation: mp-rise .7s var(--mp-ease) .75s both; }
-  .mp-play .mp-seal { animation: mp-stamp .75s var(--mp-ease) 1s both; }
+  .mp-play .mp-bar-1 { animation: mp-wipe .6s var(--mp-ease) both; }
+  .mp-play .mp-bar-2 { animation: mp-wipe .55s var(--mp-ease) .12s both; }
+  .mp-play .mp-program { animation: mp-rise .55s var(--mp-ease) .25s both; }
+  .mp-play .mp-lede { animation: mp-rise .55s var(--mp-ease) .35s both; }
+  .mp-play .mp-seal { animation: mp-stamp .7s var(--mp-ease) .45s both; }
   .mp-retell .mp-bar-1 { animation: mp-wipe .5s var(--mp-ease) both; }
   .mp-retell .mp-bar-2 { animation: mp-wipe .45s var(--mp-ease) .08s both; }
   .mp-retell .mp-program { animation: mp-rise .45s var(--mp-ease) .14s both; }
@@ -160,11 +160,11 @@
   .mp-row-fill { opacity: 0; transition: opacity .5s ease calc(var(--i, 0) * 30ms); }
   .mp-rows.mp-vista .mp-row-fill { opacity: 1; }
   .mp-play .mp-logo { animation: mp-fade .5s ease both; }
-  .mp-play .mp-bar-1 { animation: mp-fade .6s ease .1s both; }
-  .mp-play .mp-bar-2 { animation: mp-fade .6s ease .25s both; }
-  .mp-play .mp-program { animation: mp-fade .6s ease .4s both; }
-  .mp-play .mp-lede { animation: mp-fade .6s ease .55s both; }
-  .mp-play .mp-seal { animation: mp-fade .6s ease .7s both; }
+  .mp-play .mp-bar-1 { animation: mp-fade .4s ease both; }
+  .mp-play .mp-bar-2 { animation: mp-fade .4s ease .1s both; }
+  .mp-play .mp-program { animation: mp-fade .4s ease .2s both; }
+  .mp-play .mp-lede { animation: mp-fade .4s ease .3s both; }
+  .mp-play .mp-seal { animation: mp-fade .4s ease .4s both; }
   .mp-retell .mp-bar-1, .mp-retell .mp-bar-2, .mp-retell .mp-program { animation: mp-fade .35s ease both; }
   .mp-h2.mp-wait { opacity: 0; }
   .mp-h2.mp-in { animation: mp-fade .5s ease both; }
@@ -484,7 +484,8 @@ dash.calc('contagens', {
     d3.select(el).interrupt();
     // O valor final fica escrito desde já: se a aba estiver em segundo plano, a contagem não deixa um número velho na tela.
     el.textContent = fmt(alvo);
-    if (!MOVER || de === alvo) return;
+    // Na primeira vez o número aparece direto; a contagem só anima mudanças (ex.: troca de curso).
+    if (!MOVER || de === 0 || de === alvo) return;
     d3.select(el).transition().duration(950).ease(d3.easeCubicOut)
       .tween('text', () => { const i = d3.interpolateRound(de, alvo); return (t) => { el.textContent = fmt(i(t)); }; })
       .on('interrupt end', () => { el.textContent = fmt(alvo); });

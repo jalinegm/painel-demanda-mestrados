@@ -36,7 +36,6 @@ html, body { margin: 0; background: #0e3b22; }
 .dash-skeleton { color: transparent !important; background: rgba(255, 255, 255, .12); border-radius: 4px; }
 .mp-rows.dash-skeleton { min-height: 8rem; }
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 <script>
 // Versão mínima do objeto `dash` do painel do Claude, lendo o CSV publicado ao lado.
 (() => {
@@ -53,9 +52,12 @@ html, body { margin: 0; background: #0e3b22; }
     .then((r) => (r.ok ? r.json() : null))
     .then((j) => { if (j && j.conferido_em) { conferidoEm = j.conferido_em; rodar(); } })
     .catch(() => {});
-  fetch('dados/respostas.csv', { cache: 'no-cache' })
-    .then((r) => { if (!r.ok) throw new Error(r.status); return r.text(); })
-    .then((texto) => { linhas = d3.csvParse(texto); estado = 'ok'; rodar(); })
+  // Os dados começam a baixar junto com o d3, não depois dele; a leitura espera o d3 estar pronto.
+  const texto = fetch('dados/respostas.csv', { cache: 'no-cache' })
+    .then((r) => { if (!r.ok) throw new Error(r.status); return r.text(); });
+  const domPronto = new Promise((ok) => (document.readyState === 'loading' ? addEventListener('DOMContentLoaded', ok) : ok()));
+  Promise.all([texto, domPronto])
+    .then(([t]) => { linhas = d3.csvParse(t); estado = 'ok'; rodar(); })
     .catch(() => { estado = 'error'; rodar(); });
   window.dash = {
     calc: (id, def) => { calcs[id] = def; },
@@ -83,6 +85,7 @@ html, body { margin: 0; background: #0e3b22; }
   };
 })();
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
 </head>
 <body>
 <div id="dash-root">
